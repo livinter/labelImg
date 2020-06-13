@@ -1,0 +1,26 @@
+<annotation>
+        <folder>images</folder>
+        <filename>019524060.jpg</filename>
+        <path>../../videos/images/019524060.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>238</width>
+                <height>158</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+        <object>
+                <name>weld</name>
+                <pose>Unspecified</pose>
+                <truncated>0</truncated>
+                <difficult>0</difficult>
+                <bndbox>
+                        <xmin>48</xmin>
+                        <ymin>128</ymin>
+                        <xmax>85</xmax>
+                        <ymax>161</ymax>
+                </bndbox>
+        </object>
+</annotation>

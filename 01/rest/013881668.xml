@@ -1,0 +1,26 @@
+<annotation>
+        <folder>images</folder>
+        <filename>013881668.jpg</filename>
+        <path>../../videos/images/013881668.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>475</width>
+                <height>356</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+        <object>
+                <name>stay</name>
+                <pose>Unspecified</pose>
+                <truncated>0</truncated>
+                <difficult>0</difficult>
+                <bndbox>
+                        <xmin>93</xmin>
+                        <ymin>76</ymin>
+                        <xmax>114</xmax>
+                        <ymax>168</ymax>
+                </bndbox>
+        </object>
+</annotation>

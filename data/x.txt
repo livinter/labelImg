@@ -1,0 +1,11 @@
+sit
+down
+stay
+walk
+crouch
+hands_up
+gun_pointing
+person_other
+weld
+backpack
+head_masked

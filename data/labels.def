@@ -1,0 +1,7 @@
+sit,sit,0.10,0.25,0.4
+down,down,0.10,0.25,0.4
+stay,stay,0.10,0.25,0.4
+walk,walk,0.10,0.25,0.4
+crouch,crouch,0.10,0.25,0.4
+hands_up,hands_up,0.10,0.25,0.4
+gun_pointing,gun_pointing,0.15,0.25,0.4

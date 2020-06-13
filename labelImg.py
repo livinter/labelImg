@@ -261,6 +261,8 @@ class MainWindow(QMainWindow, WindowMixin):
                         'w', 'new', u'Draw a new Box', enabled=False)
         delete = action('Delete\nRectBox', self.deleteSelectedShape,
                         'Delete', 'delete', u'Delete', enabled=False)
+        deletefile = action('Delete\nFile', self.deleteSelectedFile,
+                        'Delete File', 'delete file', u'Delete File', enabled=False)
         copy = action('&Duplicate\nRectBox', self.copySelectedShape,
                       'Ctrl+D', 'copy', u'Create a duplicate of the selected Box',
                       enabled=False)
@@ -329,6 +331,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Lavel list context menu.
         labelMenu = QMenu()
         addActions(labelMenu, (edit, delete))
+        addActions(labelMenu, (edit, deletefile))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(
             self.popLabelListMenu)
@@ -342,7 +345,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Store actions for further handling.
         self.actions = struct(save=save, save_format=save_format, saveAs=saveAs, open=open, close=close, resetAll = resetAll,
-                              lineColor=color1, create=create, delete=delete, edit=edit, copy=copy,
+                              lineColor=color1, create=create, delete=delete,deletefile=deletefile, edit=edit, copy=copy,
                               createMode=createMode, editMode=editMode, advancedMode=advancedMode,
                               shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                               zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
@@ -351,7 +354,7 @@ class MainWindow(QMainWindow, WindowMixin):
                               fileMenuActions=(
                                   open, opendir, save, saveAs, close, resetAll, quit),
                               beginner=(), advanced=(),
-                              editMenu=(edit, copy, delete,
+                              editMenu=(edit, copy, deletefile,
                                         None, color1, self.drawSquaresOption),
                               beginnerContext=(create, edit, copy, delete),
                               advancedContext=(createMode, editMode, edit, copy,
@@ -407,7 +410,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, opendir, changeSavedir, openNextImg, openPrevImg, verify, save, save_format, None, create, copy, delete, None,
+            open, opendir, changeSavedir, openNextImg, openPrevImg, verify, save, save_format, None, create, copy, deletefile, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
@@ -1188,6 +1191,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def importDirImages(self, dirpath):
         if not self.mayContinue() or not dirpath:
             return
+        self.actions.deletefile.setEnabled(1)
 
 
         self.lastOpenDir = dirpath
@@ -1368,6 +1372,28 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.noShapes():
             for action in self.actions.onShapesPresent:
                 action.setEnabled(False)
+
+    def deleteSelectedFile(self):
+        import os
+        currIndex = self.mImgList.index(self.filePath)
+        filename = self.mImgList[currIndex]
+        trash_path = os.path.join(self.dirname,"trash")
+        try:
+            os.mkdir(trash_path)
+        except:
+            pass
+        _, file = os.path.split(filename)
+        trash_path_jpg = os.path.join(trash_path, file)
+        print("mv ",filename,"to",trash_path_jpg )
+        os.rename(filename,trash_path_jpg )
+        self.setClean()
+        self.openNextImg()
+        del self.mImgList[currIndex]
+        self.fileListWidget.clear()
+        for imgPath in self.mImgList:
+            item = QListWidgetItem(imgPath)
+            self.fileListWidget.addItem(item)
+
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',

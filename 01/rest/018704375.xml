@@ -1,0 +1,26 @@
+<annotation>
+        <folder>images</folder>
+        <filename>018704375.jpg</filename>
+        <path>../../videos/images/018704375.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>211</width>
+                <height>158</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+        <object>
+                <name>head_masked</name>
+                <pose>Unspecified</pose>
+                <truncated>0</truncated>
+                <difficult>0</difficult>
+                <bndbox>
+                        <xmin>98</xmin>
+                        <ymin>14</ymin>
+                        <xmax>114</xmax>
+                        <ymax>39</ymax>
+                </bndbox>
+        </object>
+</annotation>

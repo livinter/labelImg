@@ -1,0 +1,14 @@
+<annotation>
+        <folder>images</folder>
+        <filename>018819998.jpg</filename>
+        <path>../../videos/images/018819998.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>238</width>
+                <height>158</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+</annotation>
