@@ -1,0 +1,26 @@
+<annotation>
+        <folder>generated</folder>
+        <filename>flachau21_178_68360.jpg</filename>
+        <path>screenshots/flachau21_178_68360.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>1280</width>
+                <height>720</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+        <object>
+            <name>longines</name>
+            <pose>Unspecified</pose>
+            <truncated>0</truncated>
+            <difficult>0</difficult>
+            <bndbox>
+                    <xmin>568</xmin>
+                    <ymin>572</ymin>
+                    <xmax>724</xmax>
+                    <ymax>604</ymax>
+            </bndbox>
+    </object>
+</annotation>

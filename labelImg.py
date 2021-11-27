@@ -16,7 +16,7 @@ try:
     from PyQt5.QtCore import *
     from PyQt5.QtWidgets import *
 except ImportError:
-    # needed for py3+qt4
+    # needed for py3+deqt4
     # Ref:
     # http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
     # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
@@ -74,6 +74,11 @@ class WindowMixin(object):
             addActions(toolbar, actions)
         self.addToolBar(Qt.LeftToolBarArea, toolbar)
         return toolbar
+
+
+import sys
+
+
 
 
 # PyQt5: TypeError: unhashable type: 'QListWidgetItem'
@@ -221,8 +226,8 @@ class MainWindow(QMainWindow, WindowMixin):
         opendir = action('&Open Dir', self.openDirDialog,
                          'Ctrl+u', 'open', u'Open Dir')
 
-        changeSavedir = action('&Change Save Dir', self.changeSavedirDialog,
-                               'Ctrl+r', 'open', u'Change default saved Annotation dir')
+        # changeSavedir = action('&Change Save Dir', self.changeSavedirDialog,
+        #                        'Ctrl+r', 'open', u'Change default saved Annotation dir')
 
         openAnnotation = action('&Open Annotation', self.openAnnotationDialog,
                                 'Ctrl+Shift+O', 'open', u'Open Annotation')
@@ -261,8 +266,8 @@ class MainWindow(QMainWindow, WindowMixin):
                         'w', 'new', u'Draw a new Box', enabled=False)
         delete = action('Delete\nRectBox', self.deleteSelectedShape,
                         'Delete', 'delete', u'Delete', enabled=False)
-        deletefile = action('Delete\nFile', self.deleteSelectedFile,
-                        'Delete File', 'delete file', u'Delete File', enabled=False)
+        deletefile = action('Delete\n&X File', self.deleteSelectedFile,
+                        'Ctrl+X', 'delete file', u'Delete File', enabled=False)
         copy = action('&Duplicate\nRectBox', self.copySelectedShape,
                       'Ctrl+D', 'copy', u'Create a duplicate of the selected Box',
                       enabled=False)
@@ -389,7 +394,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.paintLabelsOption.triggered.connect(self.togglePaintLabelsOption)
 
         addActions(self.menus.file,
-                   (open, opendir, changeSavedir, openAnnotation, self.menus.recentFiles, save, save_format, saveAs, close, resetAll, quit))
+                   (open, opendir,  openAnnotation, self.menus.recentFiles, save, save_format, saveAs, close, resetAll, quit))#changeSavedir,
         addActions(self.menus.help, (help, showInfo))
         addActions(self.menus.view, (
             self.autoSaving,
@@ -410,11 +415,11 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, opendir, changeSavedir, openNextImg, openPrevImg, verify, save, save_format, None, create, copy, deletefile, None,
+            open, opendir,   openNextImg, openPrevImg, deletefile,verify, save, save_format, None, create, copy,  None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
-            open, opendir, changeSavedir, openNextImg, openPrevImg, save, save_format, None,
+            open, opendir,  openNextImg, openPrevImg, deletefile,save, save_format, None,
             createMode, editMode, None,
             hideAll, showAll)
 
@@ -487,7 +492,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelCoordinates = QLabel('')
         self.statusBar().addPermanentWidget(self.labelCoordinates)
 
-        # Open Dir if deafult file
+        # Open Dir if default file
         if self.filePath and os.path.isdir(self.filePath):
             self.openDirDialog(dirpath=self.filePath)
 
@@ -1127,16 +1132,34 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.mayContinue():
             self.loadFile(filename)
 
-    def scanAllImages(self, folderPath):
+    def scanAllImages(self, folderPath, search_for= ""):
         extensions = ['.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
         images = []
 
         for root, dirs, files in os.walk(folderPath):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
-                    relativePath = os.path.join(root, file)
-                    path = ustr(os.path.abspath(relativePath))
-                    images.append(path)
+                    take_that_file = True
+                    if search_for:
+                        take_that_file = False
+                        xfile=os.path.join(root,file.lower().replace(".jpg",".xml"))
+                        try:
+                            xml= open(xfile,"rb")
+                        except FileNotFoundError:
+                            xml=None
+                        if xml:
+                            s = xml.read()
+                            try:
+                                s=s.decode("latin-1")
+                            except:
+                                s=s.decode("utf-8")
+
+                            if s.find(search_for )>=0 or search_for in file:
+                                take_that_file=True
+                    if take_that_file:
+                        relativePath = os.path.join(root, file)
+                        path = ustr(os.path.abspath(relativePath))
+                        images.append(path)
         images.sort(key=lambda x: x.lower())
         return images
 
@@ -1186,9 +1209,15 @@ class MainWindow(QMainWindow, WindowMixin):
         targetDirPath = ustr(QFileDialog.getExistingDirectory(self,
                                                      '%s - Open Directory' % __appname__, defaultOpenDirPath,
                                                      QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks))
-        self.importDirImages(targetDirPath)
 
-    def importDirImages(self, dirpath):
+        search_for, ok = QInputDialog.getText(self, 'Text Input Dialog', 'Enter your name:')
+
+
+
+        self.importDirImages(targetDirPath, search_for=search_for )
+        self.defaultSaveDir = targetDirPath
+
+    def importDirImages(self, dirpath, search_for= ""):
         if not self.mayContinue() or not dirpath:
             return
         self.actions.deletefile.setEnabled(1)
@@ -1198,7 +1227,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dirname = dirpath
         self.filePath = None
         self.fileListWidget.clear()
-        self.mImgList = self.scanAllImages(dirpath)
+        self.mImgList = self.scanAllImages(dirpath, search_for=search_for)
         self.openNextImg()
         for imgPath in self.mImgList:
             item = QListWidgetItem(imgPath)
@@ -1377,7 +1406,7 @@ class MainWindow(QMainWindow, WindowMixin):
         import os
         currIndex = self.mImgList.index(self.filePath)
         filename = self.mImgList[currIndex]
-        trash_path = os.path.join(self.dirname,"trash")
+        trash_path = "/tmp/trash/" # os.path.join(self.dirname,"/tmp/trash")
         try:
             os.mkdir(trash_path)
         except:
@@ -1386,6 +1415,7 @@ class MainWindow(QMainWindow, WindowMixin):
         trash_path_jpg = os.path.join(trash_path, file)
         print("mv ",filename,"to",trash_path_jpg )
         os.rename(filename,trash_path_jpg )
+        os.rename(filename.replace(".jpg",".xml"),trash_path_jpg.replace(".jpg",".xml") )
         self.setClean()
         self.openNextImg()
         del self.mImgList[currIndex]

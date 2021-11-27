@@ -1,0 +1,2 @@
+pacman -Rsc pycuda-headers python-pycuda
+

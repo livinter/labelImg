@@ -1,0 +1,26 @@
+<annotation>
+        <folder>generated</folder>
+        <filename>schladming_95250.jpg</filename>
+        <path>screenshots/schladming_95250.jpg</path>
+        <source>
+                <database>Unknown</database>
+        </source>
+        <size>
+                <width>960</width>
+                <height>540</height>
+                <depth>3</depth>
+        </size>
+        <segmented>0</segmented>
+        <object>
+            <name>goesser</name>
+            <pose>Unspecified</pose>
+            <truncated>0</truncated>
+            <difficult>0</difficult>
+            <bndbox>
+                    <xmin>188</xmin>
+                    <ymin>141</ymin>
+                    <xmax>321</xmax>
+                    <ymax>184</ymax>
+            </bndbox>
+    </object>
+</annotation>
