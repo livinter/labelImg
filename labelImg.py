@@ -1406,7 +1406,7 @@ class MainWindow(QMainWindow, WindowMixin):
         import os
         currIndex = self.mImgList.index(self.filePath)
         filename = self.mImgList[currIndex]
-        trash_path = "/tmp/trash/" # os.path.join(self.dirname,"/tmp/trash")
+        trash_path =   os.path.join(self.dirname,"trash")
         try:
             os.mkdir(trash_path)
         except:
